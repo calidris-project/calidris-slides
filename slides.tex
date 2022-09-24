@@ -1,0 +1,456 @@
+\documentclass[aspectratio=169]{beamer}
+
+\usepackage{lmodern}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\DeclareUnicodeCharacter{2A53}{$\land$}
+\DeclareUnicodeCharacter{2A54}{$\lor$}
+\DeclareUnicodeCharacter{27F9}{$\implies$}
+\DeclareUnicodeCharacter{27FA}{$\iff$}
+\DeclareUnicodeCharacter{22D3}{$\cup$}
+\graphicspath{{assets/}}
+
+\usetheme{metropolis} 
+\setbeamertemplate{navigation symbols}{}
+\titlegraphic{\includegraphics[height=1cm]{lambda.png}}
+
+\title{Stating the Obvious}
+\date{September 2022}
+\author{boxy}
+
+\usepackage{epigraph}
+\setlength\epigraphwidth{.8\textwidth}
+\setlength\epigraphrule{0pt}
+
+\usepackage{syntax}
+\usepackage{cprotect}
+\usepackage{minted} 
+\usepackage{ebproof}
+
+\usepackage{tikz}
+\usepackage{tikz-qtree}
+\usetikzlibrary{automata, arrows.meta, positioning, decorations, decorations.pathreplacing}
+\usetikzlibrary{positioning, calc}
+
+
+\usepackage{etoolbox,xpatch}
+\makeatletter
+\AtBeginEnvironment{minted}{\dontdofcolorbox}
+\def\dontdofcolorbox{\renewcommand\fcolorbox[4][]{##4}}
+\xpatchcmd{\inputminted}{\minted@fvset}{\minted@fvset\dontdofcolorbox}{}{}
+\xpatchcmd{\mintinline}{\minted@fvset}{\minted@fvset\dontdofcolorbox}{}{} % see https://tex.stackexchange.com/a/401250/
+\makeatother
+\newcommand{\hs}[2][]{\mintinline[breaklines,#1]{haskell}{#2}}
+\expandafter\def\expandafter\insertshorttitle\expandafter{%
+	\insertshorttitle\hfill%
+	\insertframenumber\,/\,\inserttotalframenumber}
+
+\begin{document}
+	
+\maketitle
+
+\begin{frame}
+	\frametitle{Paradoxes and Fallacies} 
+	\begin{columns}[T]
+		\begin{column}{0.60 \textwidth}
+			\begin{itemize}
+				\item<1-> What is the smallest positive integer not definable in under hundred letters? 
+				\item<2-> It is impossible to run any distance
+			\end{itemize}
+		\end{column}
+		\hfill 
+		\begin{column}{0.30 \textwidth}
+			\centering
+			\includegraphics[width=0.7\textwidth]{penrose}
+		\end{column}
+	\end{columns} 
+\end{frame}
+
+\begin{frame} 
+	\frametitle{Zeno's Paradox}
+	\only<1>{First run half a meter.}
+	\only<2>{Then a quarter meter.}
+	\only<3>{And so on.}
+	\vspace{3em}
+	\begin{center}
+	\begin{tikzpicture}
+	\fill[green] (0,0) rectangle (5,1.5);
+	\draw[<->](0,2) -- node[above] {$0.5$}  (5, 2);
+	\onslide<2->{
+		\fill[lime] (5,0) rectangle (7.5,1.5);
+	\draw[<->](5,2) -- node[above] {$0.25$}  (7.5, 2);}
+\onslide<3->{
+	\fill[cyan] (7.5,0) rectangle (8.75,1.5);
+	\fill[blue] (8.75,0) rectangle (9.375,1.5);
+	\fill[orange] (9.375,0) rectangle (9.6875,1.5);
+	\draw[<->](7.5,2) -- node[above] {$0.25$} (10, 2);}
+
+	\draw(10,1.5);
+	\end{tikzpicture}
+	\end{center}
+	
+	
+\end{frame}
+
+\iffalse 
+
+\begin{frame} 
+	\frametitle{Jelly Beans}
+	\only<1>{
+		Box with one jelly bean:
+		\vspace{3em}
+		\begin{center}
+			\begin{tikzpicture}
+				\fill[lime] (0,0) ellipse (0.7cm and 0.5cm);
+			\end{tikzpicture}
+		\end{center}
+	}
+	
+	\only<2->{
+		Box with more jelly beans:
+		\vspace{5em}
+		\begin{center}
+			\begin{tikzpicture}
+				\draw(0,-6);
+				\onslide<2-3>{\draw[decoration={brace, raise={4ex}}, decorate] (0,0) -- node[above,yshift=4.5ex, red] {Same colour} (6,0);}
+				
+				\onslide<3>{\draw[decoration={brace, raise={4ex}}, decorate] (8,0) -- node[below,yshift=-4.5ex, red] {Same colour} (2,0);}
+				
+				\onslide<1-3>{\fill[lime!60] (0,0) ellipse (0.7cm and 0.5cm);}
+				\fill[lime] (2,0) ellipse (0.7cm and 0.5cm);
+				\fill[lime] (4,0) ellipse (0.7cm and 0.5cm);
+				\fill[lime] (6,0) ellipse (0.7cm and 0.5cm);
+				\onslide<1-3>{\fill[lime!60] (8,0) ellipse (0.7cm and 0.5cm);}
+				\onslide<4> {
+					\draw[decoration={brace, raise={4ex}}, decorate] (0,0) -- node[above,yshift=4.5ex, red] {Same colour} (8,0);
+					\fill[lime] (0,0) ellipse (0.7cm and 0.5cm);
+					\fill[lime] (8,0) ellipse (0.7cm and 0.5cm);
+					
+				}
+			\end{tikzpicture}
+		\end{center}
+	}
+\end{frame}
+\fi
+
+\section{Project Background} 
+\begin{frame}
+		\frametitle{Programming Languages}
+		Calculating $5 + 3 * 2$. 
+		\vspace{1em}
+		\pause 
+			\begin{center}
+			\begin{tikzpicture}[scale=0.8]
+				\begin{scope}[shift = {(-1.25, 0)}] 
+					\draw [-> ] (1.25, 1.5) -- node[above] {\small push 5} (2.45, 1.5); 
+					
+					\begin{scope}[shift={(2.7, 0)}]
+						\draw (0,0) rectangle (1,1) node[pos=.5] {5};
+						\draw (0,1) rectangle (1,2);
+						\draw (0,2) rectangle (1,3);
+						\draw [-> ] (1.25, 1.5) -- node[above] {\small push 3} (2.45, 1.5); 
+					\end{scope}
+					
+					\begin{scope}[shift={(5.4, 0)}]
+						\draw (0,0) rectangle (1,1) node[pos=.5] {5};
+						\draw (0,1) rectangle (1,2) node[pos=.5] {3};
+						\draw (0,2) rectangle (1,3);
+						\draw [-> ] (1.25, 1.5) -- node[above] {\small push 2} (2.45, 1.5); 
+					\end{scope}
+					
+					\begin{scope}[shift={(8.1, 0)}]
+						\draw (0,0) rectangle (1,1) node[pos=.5] {5};
+						\draw (0,1) rectangle (1,2) node[pos=.5] {3};
+						\draw (0,2) rectangle (1,3) node[pos=.5] {2};
+						\draw [-> ] (1.25, 1.5) -- node[above] {\small multiply} (2.95, 1.5); 
+					\end{scope}
+					
+					\begin{scope}[shift={(11.3, 0)}]
+						\draw (0,0) rectangle (1,1) node[pos=.5] {5};
+						\draw (0,1) rectangle (1,2) node[pos=.5] {6};
+						\draw (0,2) rectangle (1,3);
+						\draw [-> ] (1.25, 1.5) -- node[above] {\small add} (2.45, 1.5); 
+					\end{scope}
+					
+					\begin{scope}[shift={(14, 0)}]
+						\draw (0,0) rectangle (1,1) node[pos=.5] {11};
+						\draw (0,1) rectangle (1,2);
+						\draw (0,2) rectangle (1,3);
+					\end{scope}
+				\end{scope}
+				
+			\end{tikzpicture}
+		\end{center}
+\end{frame}	
+
+\begin{frame}[fragile]
+	\frametitle{Programming Languages}
+	\begin{minted}[numbersep=5pt,gobble=0,frame=lines,framesep=2mm,breaklines]{c}
+static void cmd_backup(struct userrec *u, int idx, char *par)
+{
+	putlog(LOG_CMDS, "*", "#%s# backup", dcc[idx].nick);
+	dprintf(idx, "Backing up the channel & user files...\n");
+	call_hook(HOOK_BACKUP);
+}
+	\end{minted}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Programming Languages}
+	\begin{minted}[numbersep=5pt,gobble=0,frame=lines,framesep=2mm,breaklines]{Haskell}
+powerset = filterM (\_ -> [True, False])
+	\end{minted}
+\end{frame}
+		
+\begin{frame} 
+		\frametitle{The Obvious}
+		\begin{itemize}
+			\item<2-> ``Roses are red and violets are blue'' is logically equivalent to ``Violets are blue and roses are red''
+			\item<3-> $2 + 3 = 5$
+			\item<4-> $a + b = b + a$ 
+			\item<5-> $1 \neq 2$
+		\end{itemize}
+		\epigraph{Some of our fellow sinners are among the most careful and competent logicians on the contemporary scene.}{Haskell B. Curry and Robert Feys}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Applications} 
+	\begin{columns}
+\begin{column}{0.5\textwidth}
+		\begin{itemize} 
+		\item<2-> New languages can reduce labour
+		\item<3-> New languages and theorem provers can eliminate bugs
+		\begin{itemize} 
+			\item<4-> \$59 billion loss per year in US
+			\item<5-> Death
+		\end{itemize}
+	\end{itemize}
+\end{column}   
+\begin{column}{0.5\textwidth}
+	\begin{figure}
+		\centering
+		\includegraphics[width=0.7\textwidth]{ariane}
+	\end{figure}
+\end{column}
+\end{columns}
+\end{frame}
+
+\section{Foundations of Mathematics} 
+
+\begin{frame}
+	\frametitle{Meta-Languages} 
+	\vspace{2em}
+	\begin{columns}[c]
+	\begin{column}{0.30 \textwidth}
+		\uncover<2-> {
+		 
+		 \[
+		 \begin{prooftree}
+		 	\hypo{A}
+		 	\hypo{B}
+		 	\infer2[$(\land I)$]  {A \land B}
+		 \end{prooftree}
+		 \]
+		 
+		 \[
+		 \begin{prooftree}
+		 	\hypo{A \land B}
+		 	\infer1[$(\land E_1)$]  {A}
+		 \end{prooftree}
+		 \]
+		 
+		 \[
+		 \begin{prooftree}
+		 	\hypo{A \land B}
+		 	\infer1[$(\land E_2)$]  {B}
+		 \end{prooftree}
+		 \]
+		} 
+	\end{column}
+	\vline{}
+	\begin{column}{0.50 \textwidth}
+		\uncover<3->{
+		\[
+		\begin{prooftree} 
+			\hypo{A \land B}
+			\infer1[($\land E_2$)]{B}
+			\hypo{A \land B}
+			\infer1[($\land E_2$)]{A}
+			
+			\infer2[($\land I$)]{B \land A}
+		\end{prooftree}
+		\]
+	}
+	\end{column}
+\end{columns}
+\end{frame}
+\begin{frame} 
+	\frametitle{$\lambda$-Calculi}
+     Proof languages are often based off the $\lambda$-calculus. 
+     \only<2>{
+     \begin{align*}
+     	T = \underbrace{\lambda x .}_{\text{\textcolor{red}{Abstraction}}} \lambda y . x\\
+     	F = \lambda x. \lambda y. y\\
+     	N = \lambda b. \underbrace{b\ F\ T}_{\text{\textcolor{blue}{Application}}}
+     \end{align*}
+ 	}
+     \only<3>{
+    	\begin{align*}
+    		& (\lambda b. b \ F \ T) (\lambda x. \lambda y. y)\\
+    		\textcolor{blue}{\to} \ & (\lambda x. \lambda y. y)\ F \ T\\ 
+    		\textcolor{blue}{\to} \ & T
+    	\end{align*}
+    } 
+   
+     
+\end{frame}
+
+    \section{The Language}  
+    
+    \begin{frame}
+    	\frametitle{Formal Language Theory} 
+    	\vspace{2em}
+    		\begin{columns}[c]
+    		\begin{column}{0.60 \textwidth}
+    			\uncover<2-> {
+    		
+    				
+    				\begin{grammar}
+    					\centering 
+    					<add> $\rightarrow$ <var> "+" <add> | <mult>
+    					
+    					<mult> $\rightarrow$ <var> "*" <mult> | "(" <add> ")" | <var>
+    					
+    					<var> $\rightarrow$ "a" | "b" | "c" 
+    				\end{grammar} 
+    		
+    			} 
+    		\end{column}
+    		\vline{}
+    		\begin{column}{0.30 \textwidth}
+    			\only<3>{
+    				\centering
+    				   	\begin{tikzpicture}[scale=0.8]
+    					\tikzset{frontier/.style={distance from root=200pt}}
+    					\Tree [.ADD [.MULT [.VAR a ] [* ] [.MULT [ ( ] [.ADD [.VAR b ] [+ ] [.ADD [.MULT [.VAR c ] ] ] ] [ ) ] ]  ] ]
+    				\end{tikzpicture}
+    			}
+    			\only<4>{
+    				\centering
+    				\begin{tikzpicture}[scale=0.8]
+    					\node[circle,draw, label={[yshift=-0.17em,red]center:*}] (mult) at (0,0) {\phantom{*}}; 
+    					\node[circle,draw] (a) at (-1,-1) {a}; 
+    					\node[circle,draw, text = red] (plus) at (1.5,-1) {+}; 
+    					\node[circle,draw] (b) at (0.5,-2) {b}; 
+    					\node[circle,draw] (c) at (2.5,-2) {c}; 
+    					\draw (mult) -- (a);
+    					\draw(mult) -- (plus); 
+    					\draw (plus) -- (b); 
+    					\draw (plus) -- (c);
+    				\end{tikzpicture}
+    			}
+    			
+    			
+    		\end{column}
+    	\end{columns}
+    	 \end{frame}
+    	\begin{frame}
+    		\frametitle{Implementation Details} 
+			\begin{columns}[c]
+    		\begin{column}{0.40 \textwidth}
+           	\begin{itemize}
+           		\item<2-> The language is parsed 
+           		\item<3-> Definitions across files are resolved
+           		\item<4-> Definitions are topologically sorted
+           		\item<5-> Type-checking is done
+           	\end{itemize}
+           \end{column} 
+       \begin{column}{0.60 \textwidth}
+       	\centering
+       		\input{assets/biggraph.tex}
+       	\end{column}
+       \end{columns}
+ 
+    	\end{frame}    	
+    	\begin{frame}[fragile]
+    		\frametitle{One is Not Two}
+    		Logic definitions: 
+    			\begin{minted}[numbersep=5pt,gobble=0,frame=lines,framesep=2mm,breaklines]{Coq}
+bottom = forall a : Prop, a; 
+not = fun a : Prop => forall b : a, bottom;
+    		\end{minted}
+    	\pause
+    		Definition of natural numbers: 
+    \begin{minted}[numbersep=5pt,gobble=0,frame=lines,framesep=2mm,breaklines]{Coq}
+nat : Set; 
+0 : nat; 
+succ : forall a : nat, nat; 
+1 = succ 0; 2 = succ 1; 
+    \end{minted}
+\end{frame}
+
+    	\begin{frame}[fragile]
+    		\frametitle{One is Not Two}
+    		Axioms: 
+    			\begin{minted}[numbersep=5pt,gobble=0,frame=lines,framesep=2mm,breaklines]{Coq}
+equal : forall a : nat, forall b : nat, Prop; 
+lower : forall a : nat, 
+        forall b : nat, 
+        forall p : equal (succ a) (succ b), equal a b;
+0_ne_succ : forall a : nat, not (equal 0 (succ a));  
+    		\end{minted}
+\end{frame}
+
+    	\begin{frame}[fragile]
+    		\frametitle{One is Not Two}
+    		The proof: 
+    			\begin{minted}[numbersep=5pt,gobble=0,frame=lines,framesep=2mm,breaklines]{Coq}
+1_ne_2 :  not (equal 1 2)
+       =  fun p : equal 1 2 
+       => let 0_eq_1 = lower 0 1 p 
+       in 0_ne_succ 0 0_eq_1; 
+    		\end{minted}
+\end{frame}
+
+
+    \iffalse 
+      	\begin{frame}[fragile]
+    	\frametitle{No Less Confusing}
+    	Definition of existence: 
+    \begin{minted}[numbersep=5pt,gobble=0,frame=lines,framesep=2mm,breaklines]{Coq}
+exist = fun a : Set => fun gen : (forall b : a, Prop) => 
+         forall c : Prop, 
+         forall acc : (forall v : a, forall p : gen v, c), c; 
+\end{minted}
+	Definitions of inequalities:
+	    \begin{minted}[numbersep=5pt,gobble=0,frame=lines,framesep=2mm,breaklines]{Coq}
+gte = fun a : nat => fun b : nat => 
+       exist nat (fun n : nat => eq (+ b n) a);
+gt = fun a : nat => fun b : nat => gtEq a (succ b);
+	    \end{minted}
+    	\end{frame}
+    \fi
+    
+\iffalse     
+    \begin{frame}[fragile]
+    	\frametitle{No Less Confusing}
+    	\begin{minted}[numbersep=5pt,gobble=0,frame=lines,framesep=2mm,breaklines]{Coq}
+gtImpGte 
+  : forall a : nat, forall b : nat, implies (gt a b) (gte a b)
+  = fun a : nat => fun b : nat => fun p : gt a b 
+  => p (gte a b)
+       ( fun n : nat  => fun p2 : eq (+ b (succ n)) a => 
+         fun t : Prop => 
+         fun acc : (forall v : nat, forall p3 : eq (+ b v) a, t) =>
+         acc (succ n) p2
+       );
+    	\end{minted}
+    \end{frame} 
+
+\fi
+    \begin{frame}[standout]
+    	\frametitle{Tada!} 
+    	\epigraph{The point of philosophy is to start with something so simple as not to seem worth stating, and to end with something so paradoxical that no one will believe it.}{Bertrand Russell}
+    \end{frame}
+   
+\end{document}
